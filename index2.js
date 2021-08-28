@@ -1,4 +1,4 @@
-const { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes, nextISSTimesForMyLocation } = require('./iss');
+const { nextISSTimesForMyLocation } = require("./iss_promised");
 
 const printPassTimes = function(passTimes) {
   for (const pass of passTimes) {
@@ -9,34 +9,10 @@ const printPassTimes = function(passTimes) {
   }
 };
 
-const fetchISSFlyOverTimesCallback = function(error, passTimes) {
-  if (error) {
-    console.log("It didn't work!", error);
-    return;
-  }
-
-  console.log("It worked! Returned flyover times:", passTimes);
-  printPassTimes(passTimes)
-}
-
-const fetchCoordsByIPCallback = function(error, coords) {
-  if (error) {
-    console.log("It didn't work!" , error);
-    return;
-  }
-
-  console.log('It worked! Returned coords:' , coords);
-  fetchISSFlyOverTimes(coords, fetchISSFlyOverTimesCallback);
-}
-
-const fetchMyIpCallback = function(error, ip) {
-    if (error) {
-      console.log("It didn't work!" , error);
-      return;
-    }
-  
-    console.log('It worked! Returned IP:' , ip);
-    fetchCoordsByIP(ip, fetchCoordsByIPCallback);
-}
-
-fetchMyIP(fetchMyIpCallback);
+nextISSTimesForMyLocation()
+  .then((passTimes => {
+    printPassTimes(passTimes);
+  }))
+  .catch(error => {
+    console.log(error.message);
+  });
